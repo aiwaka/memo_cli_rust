@@ -1,23 +1,45 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[clap(name = "memos", author, about, version)]
-struct Args {
-    #[clap(short, exclusive(true))]
-    new: String,
+#[clap(
+    name = env!("CARGO_PKG_NAME"),
+    version = env!("CARGO_PKG_VERSION"),
+    author = env!("CARGO_PKG_AUTHORS"),
+    about = env!("CARGO_PKG_DESCRIPTION"),
+)]
+pub(crate) struct AppArgs {
+    #[command(subcommand)]
+    subcommands: Subcommands,
+}
 
-    #[clap(short, exclusive(true))]
-    storage: bool,
-
-    #[clap(short, exclusive(true))]
-    list: bool,
-
-    #[clap(short, exclusive(true))]
-    browse: String,
-
-    #[clap(short, exclusive(true))]
-    remove: String,
-
-    #[clap(exclusive(true))]
-    file_name: String,
+#[derive(Subcommand, Debug)]
+enum Subcommands {
+    /// create new file
+    New {
+        name: String,
+    },
+    /// show memo data in storage
+    List {
+        /// Display filenames with fullpath
+        #[clap(short, long)]
+        full: bool,
+    },
+    /// edit memo
+    Edit {
+        name: Option<String>,
+    },
+    /// browse memo
+    View,
+    /// remove memo from storage
+    Remove,
+    /// copy the specified memo file to current directory
+    Spawn {
+        /// copy the file as markdown
+        #[clap(short, long)]
+        md: bool,
+        /// name the file when copying
+        #[clap(short, long)]
+        name: Option<String>,
+    },
+    Serve,
 }

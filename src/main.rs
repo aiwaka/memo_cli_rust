@@ -2,7 +2,8 @@ mod config;
 mod load;
 mod parser;
 
-use crate::config::AppEnv;
+use crate::{config::AppEnv, parser::AppArgs};
+use clap::Parser;
 use config::AppConfig;
 use once_cell::sync::OnceCell;
 use std::error::Error;
@@ -16,10 +17,9 @@ static APP_CONFIG: OnceCell<AppConfig> = OnceCell::new();
 
 fn main() -> Result<(), Box<dyn Error>> {
     load_config()?;
-
     println!("{}", APP_CONFIG.get().unwrap().storage_dir);
 
-    // let args = Args::parse();
-    // println!("{:?}", args);
+    let args = AppArgs::parse();
+    println!("{:?}", args);
     Ok(())
 }
