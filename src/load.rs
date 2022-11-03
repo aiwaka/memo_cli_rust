@@ -6,7 +6,7 @@ use std::fs::read_to_string;
 use crate::config::{AppConfig, AppEnv};
 use crate::{APP_CONFIG, APP_ENV};
 
-pub(crate) fn load() -> Result<(), Box<dyn Error>> {
+pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
 
     let config_path =
