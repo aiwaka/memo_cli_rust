@@ -1,8 +1,8 @@
 use chrono::{DateTime, Local};
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::{error::Error, path::PathBuf};
 use yaml_rust::{yaml::Hash, Yaml};
 
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
@@ -24,21 +24,27 @@ fn create_frontmatter_yaml(title: &str) -> String {
     format!("{}\n---\n", to_frontmatter_text(&data).unwrap())
 }
 
-pub(crate) fn create_new_file(title: &str) -> Result<(), Box<dyn Error>> {
+/// ファイル名から実際のパスを構成する
+pub(crate) fn name_to_path(title: &str) -> PathBuf {
     let filename = format!("{}.txt", title);
     let storage_dir = Path::new(&APP_CONFIG.get().unwrap().storage_dir);
 
-    let path = storage_dir.join(Path::new(&filename));
+    storage_dir.join(Path::new(&filename))
+}
+
+pub(crate) fn create_new_file(title: &str) -> Result<(), Box<dyn Error>> {
+    let path = name_to_path(title);
     let display = path.display();
-    println!("{}", display);
+
+    let title_paragraph = format!("# {}", title);
 
     let mut file = match File::create(&path) {
         Err(why) => panic!("couldn't open {}: {}", display, why),
         Ok(file) => file,
     };
-    match file.write_all(create_frontmatter_yaml(title).as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
+    let frontmatter = create_frontmatter_yaml(title);
+    if let Err(why) = file.write_all(format!("{}{}", frontmatter, title_paragraph).as_bytes()) {
+        panic!("couldn't write to {}: {}", display, why);
     }
 
     Ok(())

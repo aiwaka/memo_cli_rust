@@ -4,6 +4,7 @@ mod frontmatter_parser;
 mod io;
 mod load;
 mod parser;
+mod vim;
 
 use crate::{commands::execute_commands, config::AppEnv, parser::AppArgs};
 use clap::Parser;
