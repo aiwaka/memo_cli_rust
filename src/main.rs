@@ -1,8 +1,11 @@
+mod commands;
 mod config;
+mod frontmatter_parser;
+mod io;
 mod load;
 mod parser;
 
-use crate::{config::AppEnv, parser::AppArgs};
+use crate::{commands::execute_commands, config::AppEnv, parser::AppArgs};
 use clap::Parser;
 use config::AppConfig;
 use once_cell::sync::OnceCell;
@@ -21,5 +24,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let args = AppArgs::parse();
     println!("{:?}", args);
+
+    execute_commands(&args)?;
+
     Ok(())
 }

@@ -7,13 +7,13 @@ use clap::{Parser, Subcommand};
     author = env!("CARGO_PKG_AUTHORS"),
     about = env!("CARGO_PKG_DESCRIPTION"),
 )]
-pub(crate) struct AppArgs {
+pub struct AppArgs {
     #[command(subcommand)]
-    subcommands: Subcommands,
+    pub subcommands: Subcommands,
 }
 
 #[derive(Subcommand, Debug)]
-enum Subcommands {
+pub enum Subcommands {
     /// create new file
     New {
         name: String,
@@ -29,9 +29,13 @@ enum Subcommands {
         name: Option<String>,
     },
     /// browse memo
-    View,
+    View {
+        name: Option<String>,
+    },
     /// remove memo from storage
-    Remove,
+    Remove {
+        name: String,
+    },
     /// copy the specified memo file to current directory
     Spawn {
         /// copy the file as markdown
