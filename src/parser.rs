@@ -16,7 +16,7 @@ pub struct AppArgs {
 pub enum Subcommands {
     /// create new file
     New {
-        name: String,
+        name: Option<String>,
     },
     /// show memo data in storage
     List {
