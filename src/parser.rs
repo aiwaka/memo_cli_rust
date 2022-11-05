@@ -16,7 +16,7 @@ pub struct AppArgs {
 pub enum Subcommands {
     /// create new file
     New { name: Option<String> },
-    /// show memo data in storage
+    /// display memo list in storage
     List {
         /// Display filenames with fullpath
         #[clap(short, long)]
@@ -26,6 +26,7 @@ pub enum Subcommands {
     Edit { name: Option<String> },
     /// browse memo
     View { name: Option<String> },
+    // TODO: grep feature
     /// remove memo from storage
     Remove { name: Option<String> },
     /// copy the specified memo file to current directory
@@ -38,7 +39,7 @@ pub enum Subcommands {
         #[clap(short, long)]
         rename: Option<String>,
     },
-    /// build a simple http server. default port is 333 (it can be configured).
+    /// build a simple http server. default port is 8191 (it can be configured).
     Serve,
     /// show the information of this app.
     Info {
