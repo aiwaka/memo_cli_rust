@@ -3,10 +3,12 @@ use pulldown_cmark::{html::push_html, Parser};
 use crate::{frontmatter_parser::parse_frontmatter, io::set_contents_from_filename};
 
 /// メモの内容からhtmlコードを生成する
-pub(super) fn create_memo_page_html(title: &str) -> String {
+pub(super) fn create_memo_block_html(title: &str) -> Option<String> {
     let mut buf = String::new();
-    set_contents_from_filename(title, &mut buf).unwrap();
-    let (frontmatter, contents) = parse_frontmatter(&buf).unwrap();
+    // 何らかの原因でErrが帰ってきた場合Noneを返す.
+    // TODO: エラーをコンソールに表示する
+    set_contents_from_filename(title, &mut buf).ok()?;
+    let (frontmatter, contents) = parse_frontmatter(&buf).ok()?;
 
     // frontmatterの有無によりタイトルを含めるなどして整形
     let contents = if let Some(fm) = frontmatter {
@@ -20,13 +22,16 @@ pub(super) fn create_memo_page_html(title: &str) -> String {
     let mut html_output = String::new();
     let parser = Parser::new(&contents);
     push_html(&mut html_output, parser);
-    html_output
+    Some(html_output)
 }
 
+/// プレビューブロックのhtmlテンプレートを記述.
 fn preview_template(title: &str, first_text: &str) -> String {
     format!(
         "
+        <a href=\"{title}\">
         <div class=\"memo-preview-block\"><h2>{title}</h2><span>{text}</span></div>
+        </a>
         ",
         title = title,
         text = first_text
@@ -34,7 +39,7 @@ fn preview_template(title: &str, first_text: &str) -> String {
 }
 
 /// プレビュー表示htmlを生成する
-pub(super) fn create_memo_block_html(title: &str) -> String {
+pub(super) fn create_memo_preview_block_html(title: &str) -> String {
     let mut buf = String::new();
     set_contents_from_filename(title, &mut buf).unwrap();
     let (frontmatter, contents) = parse_frontmatter(&buf).unwrap();

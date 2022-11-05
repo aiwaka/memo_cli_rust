@@ -55,7 +55,9 @@ pub(crate) fn name_to_exist_path(title: &str) -> PathBuf {
     if path.exists() {
         path
     } else {
-        println!("the file does not exist.");
+        println!("the file '{}' does not exist.", title);
+        // TODO: ここで終了せずに適切にエラーを伝播させるようにする
+        // そうしないとサーバーで読み込んだ際に即座にサーバーが終了して404も出ない.
         exit(1);
     }
 }
