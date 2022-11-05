@@ -39,15 +39,18 @@ pub enum Subcommands {
         #[clap(short, long)]
         rename: Option<String>,
     },
-    /// build a simple http server. default port is 8191 (it can be configured).
+    /// build a simple http server. default port is 8190 (it can be configured).
     Serve,
     /// show the information of this app.
     Info {
         /// show version (equivalent to `-V` option)
-        #[clap(long, exclusive = true)]
+        #[clap(long)]
         version: bool,
         /// show the directory which storages your memo (.txt) files.
-        #[clap(long, exclusive = true)]
+        #[clap(long)]
         storage: bool,
+        /// show the port of local server.
+        #[clap(long)]
+        port: bool,
     },
 }

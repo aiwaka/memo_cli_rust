@@ -41,8 +41,12 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::Serve => {
             http_server();
         }
-        Subcommands::Info { version, storage } => {
-            info_command(version, storage);
+        Subcommands::Info {
+            version,
+            storage,
+            port,
+        } => {
+            info_command(version, storage, port);
         }
     }
 
