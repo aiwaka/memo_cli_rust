@@ -1,14 +1,14 @@
-use crate::{
-    editor::edit_with_vim,
-    parser::{AppArgs, Subcommands},
-};
+use crate::parser::{AppArgs, Subcommands};
 
-use self::{edit::edit_command, info::info_command, list::list_memos, new::new_command};
+use self::{
+    edit::edit_command, info::info_command, list::list_memos, new::new_command, view::view_command,
+};
 
 mod edit;
 mod info;
 mod list;
 mod new;
+mod view;
 
 pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error::Error>> {
     match &args.subcommands {
@@ -21,7 +21,9 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::Edit { name } => {
             edit_command(name);
         }
-        Subcommands::View { name } => {}
+        Subcommands::View { name } => {
+            view_command(name);
+        }
         Subcommands::Remove { name } => {}
         Subcommands::Spawn { md, name } => {}
         Subcommands::Serve => {}

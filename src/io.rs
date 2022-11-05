@@ -33,8 +33,11 @@ pub(crate) fn name_to_path(title: &str) -> PathBuf {
     storage_dir.join(Path::new(&filename))
 }
 
-/// ファイル名を指定してコンテンツの1行目を取得する. 改行は空白に置き換える
-pub(crate) fn extract_first_line(title: &str) -> Result<String, std::io::Error> {
+/// ファイル名を指定してコンテンツ全体をbufに格納する.
+pub(crate) fn set_contents_from_filename(
+    title: &str,
+    buf: &mut String,
+) -> Result<(), std::io::Error> {
     let path = name_to_path(title);
     let display = path.display();
     let file = match File::open(&path) {
@@ -42,8 +45,14 @@ pub(crate) fn extract_first_line(title: &str) -> Result<String, std::io::Error> 
         Ok(file) => file,
     };
     let mut reader = BufReader::new(file);
+    reader.read_to_string(buf)?;
+    Ok(())
+}
+
+/// ファイル名を指定してコンテンツの1行目を取得する. 改行は空白に置き換える
+pub(crate) fn extract_first_line(title: &str) -> Result<String, std::io::Error> {
     let mut buf = String::new();
-    reader.read_to_string(&mut buf)?;
+    set_contents_from_filename(title, &mut buf)?;
     let (_, text) = parse_frontmatter(&buf).unwrap();
     let first_text = text
         .chars()
