@@ -8,4 +8,5 @@ pub struct AppEnv {
 #[derive(Debug, Deserialize)]
 pub struct AppConfig {
     pub storage_dir: String,
+    pub server_port: u16,
 }

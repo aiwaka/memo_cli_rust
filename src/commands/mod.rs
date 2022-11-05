@@ -1,4 +1,7 @@
-use crate::parser::{AppArgs, Subcommands};
+use crate::{
+    parser::{AppArgs, Subcommands},
+    server::http_server,
+};
 
 use self::{
     copy::copy_command, edit::edit_command, info::info_command, list::list_memos, new::new_command,
@@ -35,7 +38,9 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::Copy { name, md, rename } => {
             copy_command(name, md, rename);
         }
-        Subcommands::Serve => {}
+        Subcommands::Serve => {
+            http_server();
+        }
         Subcommands::Info { version, storage } => {
             info_command(version, storage);
         }

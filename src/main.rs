@@ -6,6 +6,7 @@ mod io;
 mod load;
 mod memo_list;
 mod parser;
+mod server;
 
 use crate::{commands::execute_commands, config::AppEnv, parser::AppArgs};
 use clap::Parser;

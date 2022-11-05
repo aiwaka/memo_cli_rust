@@ -9,6 +9,7 @@ use yaml_rust::{yaml::Hash, Yaml};
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
+// TODO: display_text -> prompt
 pub(crate) fn input_simple_text(display_text: &str) -> String {
     let mut buf = String::new();
     print!("{}", display_text);
