@@ -58,3 +58,11 @@ pub(crate) fn fuzzy_select_memo() -> String {
         .unwrap();
     name_list[selection].clone()
 }
+
+pub(crate) fn fuzzy_select_memo_or_default(default: &Option<String>) -> String {
+    if let Some(name) = default {
+        name.clone()
+    } else {
+        fuzzy_select_memo()
+    }
+}

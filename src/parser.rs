@@ -27,7 +27,7 @@ pub enum Subcommands {
     /// browse memo
     View { name: Option<String> },
     /// remove memo from storage
-    Remove { name: String },
+    Remove { name: Option<String> },
     /// copy the specified memo file to current directory
     Copy {
         /// copy the file as markdown

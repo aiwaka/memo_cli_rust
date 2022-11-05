@@ -1,7 +1,7 @@
 use crate::io::{create_new_file, input_simple_text};
 use std::error::Error;
 
-pub(super) fn new_command(name: &Option<String>) -> Result<(), Box<dyn Error>> {
+pub(super) fn new_command(name: &Option<String>) -> Result<String, Box<dyn Error>> {
     let name = if let Some(name) = name {
         name.clone()
     } else {
@@ -10,5 +10,5 @@ pub(super) fn new_command(name: &Option<String>) -> Result<(), Box<dyn Error>> {
     };
     create_new_file(&name)?;
 
-    Ok(())
+    Ok(name)
 }

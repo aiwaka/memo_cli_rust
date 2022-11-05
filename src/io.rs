@@ -47,6 +47,12 @@ pub(crate) fn name_to_path(title: &str) -> PathBuf {
     storage_dir.join(Path::new(&filename))
 }
 
+/// ファイル名からパスを構成する. 存在しないファイルの場合Noneを返す
+pub(crate) fn name_to_exist_path(title: &str) -> Option<PathBuf> {
+    let path = name_to_path(title);
+    path.exists().then_some(path)
+}
+
 /// ファイル名を指定してコンテンツ全体をbufに格納する.
 pub(crate) fn set_contents_from_filename(
     title: &str,
