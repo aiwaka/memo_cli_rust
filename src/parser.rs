@@ -39,6 +39,16 @@ pub enum Subcommands {
     },
     /// build a simple http server. default port is 333 (it can be configured).
     Serve,
-    ///
-    Info,
+    /// show the information of this app.
+    Info {
+        /// show version (equivalent to `-V` option)
+        #[clap(long, exclusive = true)]
+        version: bool,
+        /// show the directory which storages your memo (.txt) files.
+        #[clap(long, exclusive = true)]
+        storage: bool,
+        /// show all other information.
+        #[clap(short, long)]
+        all: bool,
+    },
 }

@@ -63,7 +63,7 @@ fn to_fm_test() {
     );
     map.insert(
         Yaml::String("author".to_string()),
-        Yaml::String("aiwaka".to_string()),
+        Yaml::String("author1".to_string()),
     );
     let data = Yaml::Hash(map);
     let text = to_frontmatter_text(&data).unwrap();
