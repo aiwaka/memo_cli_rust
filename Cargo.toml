@@ -17,7 +17,7 @@ yaml-rust = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 clap = { version = "4.0", features = ["derive"] }
 dialoguer = { version = "0.10", features = ["fuzzy-select"] }
-home = "*"
+home-dir = "*"
 dotenv = "0.15"
 
 [dev-dependencies]
