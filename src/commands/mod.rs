@@ -36,12 +36,8 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             copy_command(name, md, rename);
         }
         Subcommands::Serve => {}
-        Subcommands::Info {
-            version,
-            storage,
-            all,
-        } => {
-            info_command(version, storage, all);
+        Subcommands::Info { version, storage } => {
+            info_command(version, storage);
         }
     }
 

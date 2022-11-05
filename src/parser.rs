@@ -48,8 +48,5 @@ pub enum Subcommands {
         /// show the directory which storages your memo (.txt) files.
         #[clap(long, exclusive = true)]
         storage: bool,
-        /// show all other information.
-        #[clap(short, long)]
-        all: bool,
     },
 }
