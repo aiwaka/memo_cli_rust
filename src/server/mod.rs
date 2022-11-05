@@ -16,7 +16,10 @@ pub(crate) fn http_server() {
     let port = APP_CONFIG.get().unwrap().server_port;
     // TODO: handle error of result
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
-    println!("server can be used on port {}", port);
+    println!(
+        "server can be used on port {}. input command-C (or Ctrl-C) to quit.",
+        port
+    );
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
