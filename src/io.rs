@@ -2,6 +2,7 @@ use chrono::{DateTime, Local};
 use std::fs::File;
 use std::io::{prelude::*, stdin, stdout, BufReader};
 use std::path::Path;
+use std::process::exit;
 use std::{error::Error, path::PathBuf};
 use yaml_rust::{yaml::Hash, Yaml};
 
@@ -40,17 +41,22 @@ fn create_frontmatter_yaml(title: &str) -> String {
 }
 
 /// ファイル名から実際のパスを構成する
-pub(crate) fn name_to_path(title: &str) -> PathBuf {
+fn name_to_path(title: &str) -> PathBuf {
     let filename = format!("{}.txt", title);
     let storage_dir = Path::new(&APP_CONFIG.get().unwrap().storage_dir);
 
     storage_dir.join(Path::new(&filename))
 }
 
-/// ファイル名からパスを構成する. 存在しないファイルの場合Noneを返す
-pub(crate) fn name_to_exist_path(title: &str) -> Option<PathBuf> {
+/// ファイル名からパスを構成する. 存在しないファイルの場合終了する
+pub(crate) fn name_to_exist_path(title: &str) -> PathBuf {
     let path = name_to_path(title);
-    path.exists().then_some(path)
+    if path.exists() {
+        path
+    } else {
+        println!("the file does not exist.");
+        exit(1);
+    }
 }
 
 /// ファイル名を指定してコンテンツ全体をbufに格納する.
@@ -58,7 +64,7 @@ pub(crate) fn set_contents_from_filename(
     title: &str,
     buf: &mut String,
 ) -> Result<(), std::io::Error> {
-    let path = name_to_path(title);
+    let path = name_to_exist_path(title);
     let display = path.display();
     let file = match File::open(&path) {
         Err(why) => panic!("couldn't open {}: {}", display, why),

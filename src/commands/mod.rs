@@ -32,8 +32,8 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::Remove { name } => {
             remove_command(name);
         }
-        Subcommands::Copy { md, name } => {
-            copy_command(md, name);
+        Subcommands::Copy { name, md, rename } => {
+            copy_command(name, md, rename);
         }
         Subcommands::Serve => {}
         Subcommands::Info {

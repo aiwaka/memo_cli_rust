@@ -30,12 +30,13 @@ pub enum Subcommands {
     Remove { name: Option<String> },
     /// copy the specified memo file to current directory
     Copy {
+        name: Option<String>,
         /// copy the file as markdown
         #[clap(short, long)]
         md: bool,
         /// name the file when copying
         #[clap(short, long)]
-        name: Option<String>,
+        rename: Option<String>,
     },
     /// build a simple http server. default port is 333 (it can be configured).
     Serve,
