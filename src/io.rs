@@ -9,10 +9,9 @@ use yaml_rust::{yaml::Hash, Yaml};
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
-// TODO: display_text -> prompt
-pub(crate) fn input_simple_text(display_text: &str) -> String {
+pub(crate) fn input_simple_text(prompt: &str) -> String {
     let mut buf = String::new();
-    print!("{}", display_text);
+    print!("{}", prompt);
     stdout().flush().unwrap();
     stdin().read_line(&mut buf).expect("could not read string.");
     if let Some('\n') = buf.chars().next_back() {
