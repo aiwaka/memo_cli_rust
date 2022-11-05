@@ -4,6 +4,7 @@ mod editor;
 mod frontmatter_parser;
 mod io;
 mod load;
+mod memo_list;
 mod parser;
 
 use crate::{commands::execute_commands, config::AppEnv, parser::AppArgs};

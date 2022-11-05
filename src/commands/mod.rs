@@ -3,8 +3,9 @@ use crate::{
     parser::{AppArgs, Subcommands},
 };
 
-use self::{list::list_memos, new::new_command};
+use self::{edit::edit_command, list::list_memos, new::new_command};
 
+mod edit;
 mod list;
 mod new;
 
@@ -17,10 +18,7 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             list_memos(full);
         }
         Subcommands::Edit { name } => {
-            if let Some(name) = name {
-                edit_with_vim(name.clone());
-            }
-            println!("exit")
+            edit_command(name);
         }
         Subcommands::View { name } => {}
         Subcommands::Remove { name } => {}
