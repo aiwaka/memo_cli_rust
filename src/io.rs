@@ -1,10 +1,11 @@
 use chrono::{DateTime, Local};
 use std::fs::File;
-use std::io::prelude::*;
+use std::io::{prelude::*, BufReader};
 use std::path::Path;
 use std::{error::Error, path::PathBuf};
 use yaml_rust::{yaml::Hash, Yaml};
 
+use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
 /// ファイル作成時のデータをyaml形式文字列で出力
@@ -30,6 +31,27 @@ pub(crate) fn name_to_path(title: &str) -> PathBuf {
     let storage_dir = Path::new(&APP_CONFIG.get().unwrap().storage_dir);
 
     storage_dir.join(Path::new(&filename))
+}
+
+/// ファイル名を指定してコンテンツの1行目を取得する. 改行は空白に置き換える
+pub(crate) fn extract_first_line(title: &str) -> Result<String, std::io::Error> {
+    let path = name_to_path(title);
+    let display = path.display();
+    let file = match File::open(&path) {
+        Err(why) => panic!("couldn't open {}: {}", display, why),
+        Ok(file) => file,
+    };
+    let mut reader = BufReader::new(file);
+    let mut buf = String::new();
+    reader.read_to_string(&mut buf)?;
+    let (_, text) = parse_frontmatter(&buf).unwrap();
+    let first_text = text
+        .chars()
+        .enumerate()
+        .filter(|&(idx, _)| idx < 30)
+        .fold("".to_string(), |s, (_, c)| format!("{}{}", s, c));
+
+    Ok(first_text.replace('\n', " "))
 }
 
 pub(crate) fn create_new_file(title: &str) -> Result<(), Box<dyn Error>> {

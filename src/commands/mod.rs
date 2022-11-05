@@ -3,8 +3,9 @@ use crate::{
     vim::edit_with_vim,
 };
 
-use self::new::new_command;
+use self::{list::list_memos, new::new_command};
 
+mod list;
 mod new;
 
 pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error::Error>> {
@@ -12,7 +13,9 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::New { name } => {
             new_command(name)?;
         }
-        Subcommands::List { full } => {}
+        Subcommands::List { full } => {
+            list_memos(full);
+        }
         Subcommands::Edit { name } => {
             if let Some(name) = name {
                 edit_with_vim(name.clone());
