@@ -1,9 +1,11 @@
 use crate::parser::{AppArgs, Subcommands};
 
 use self::{
-    edit::edit_command, info::info_command, list::list_memos, new::new_command, view::view_command,
+    copy::copy_command, edit::edit_command, info::info_command, list::list_memos, new::new_command,
+    view::view_command,
 };
 
+mod copy;
 mod edit;
 mod info;
 mod list;
@@ -25,7 +27,9 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             view_command(name);
         }
         Subcommands::Remove { name } => {}
-        Subcommands::Spawn { md, name } => {}
+        Subcommands::Copy { md, name } => {
+            copy_command(md, name);
+        }
         Subcommands::Serve => {}
         Subcommands::Info {
             version,

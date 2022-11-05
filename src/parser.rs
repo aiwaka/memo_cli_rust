@@ -29,7 +29,7 @@ pub enum Subcommands {
     /// remove memo from storage
     Remove { name: String },
     /// copy the specified memo file to current directory
-    Spawn {
+    Copy {
         /// copy the file as markdown
         #[clap(short, long)]
         md: bool,
