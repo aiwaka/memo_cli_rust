@@ -1,12 +1,26 @@
 use chrono::{DateTime, Local};
 use std::fs::File;
-use std::io::{prelude::*, BufReader};
+use std::io::{prelude::*, stdin, stdout, BufReader};
 use std::path::Path;
 use std::{error::Error, path::PathBuf};
 use yaml_rust::{yaml::Hash, Yaml};
 
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
+
+pub(crate) fn input_simple_text(display_text: &str) -> String {
+    let mut buf = String::new();
+    print!("{}", display_text);
+    stdout().flush().unwrap();
+    stdin().read_line(&mut buf).expect("could not read string.");
+    if let Some('\n') = buf.chars().next_back() {
+        buf.pop();
+    }
+    if let Some('\r') = buf.chars().next_back() {
+        buf.pop();
+    }
+    buf
+}
 
 /// ファイル作成時のデータをyaml形式文字列で出力
 fn create_frontmatter_yaml(title: &str) -> String {
@@ -67,14 +81,12 @@ pub(crate) fn create_new_file(title: &str) -> Result<(), Box<dyn Error>> {
     let path = name_to_path(title);
     let display = path.display();
 
-    let title_paragraph = format!("# {}", title);
-
     let mut file = match File::create(&path) {
         Err(why) => panic!("couldn't open {}: {}", display, why),
         Ok(file) => file,
     };
     let frontmatter = create_frontmatter_yaml(title);
-    if let Err(why) = file.write_all(format!("{}{}", frontmatter, title_paragraph).as_bytes()) {
+    if let Err(why) = file.write_all(frontmatter.as_bytes()) {
         panic!("couldn't write to {}: {}", display, why);
     }
 
