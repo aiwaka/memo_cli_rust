@@ -15,9 +15,7 @@ pub struct AppArgs {
 #[derive(Subcommand, Debug)]
 pub enum Subcommands {
     /// create new file
-    New {
-        name: Option<String>,
-    },
+    New { name: Option<String> },
     /// show memo data in storage
     List {
         /// Display filenames with fullpath
@@ -25,17 +23,11 @@ pub enum Subcommands {
         full: bool,
     },
     /// edit memo
-    Edit {
-        name: Option<String>,
-    },
+    Edit { name: Option<String> },
     /// browse memo
-    View {
-        name: Option<String>,
-    },
+    View { name: Option<String> },
     /// remove memo from storage
-    Remove {
-        name: String,
-    },
+    Remove { name: String },
     /// copy the specified memo file to current directory
     Spawn {
         /// copy the file as markdown
@@ -45,5 +37,8 @@ pub enum Subcommands {
         #[clap(short, long)]
         name: Option<String>,
     },
+    /// build a simple http server. default port is 333 (it can be configured).
     Serve,
+    ///
+    Info,
 }

@@ -24,6 +24,7 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         Subcommands::Remove { name } => {}
         Subcommands::Spawn { md, name } => {}
         Subcommands::Serve => {}
+        Subcommands::Info => {}
     }
 
     Ok(())
