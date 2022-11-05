@@ -1,6 +1,6 @@
 use crate::{
+    editor::edit_with_vim,
     parser::{AppArgs, Subcommands},
-    vim::edit_with_vim,
 };
 
 use self::{list::list_memos, new::new_command};
