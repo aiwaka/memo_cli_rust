@@ -8,7 +8,7 @@ use home_dir::HomeDirExt;
 use crate::APP_ENV;
 
 /// コンフィグファイルを作成する.
-/// 見つからなかったか矯正上書きかでメッセージを変化させたいので引数を取る.
+/// 見つからなかった場合と強制的な上書きの場合でメッセージを変化させたいので引数を取る.
 pub(crate) fn init_config(not_found: bool) -> Result<PathBuf, std::io::Error> {
     const DEFAULT_STORAGE_PATH: &str = "~/rustmemostorage/";
     let prompt = if not_found {

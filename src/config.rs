@@ -1,8 +1,12 @@
+//! ソフトウェアの設定を保存しておくための構造体を定義する.
+//! ここで定義された構造体はグローバル変数として保持する.
+
 use std::path::PathBuf;
 
 use home_dir::HomeDirExt;
 use serde::Deserialize;
 
+/// 環境変数を持っておくための構造体. グローバルなシングルトン変数とする.
 #[derive(Debug)]
 pub struct AppEnv {
     pub config_path: String,
@@ -23,6 +27,7 @@ pub struct AppConfigInput {
     pub server_port: u16,
 }
 
+/// 読み込んだ設定を使ってアプリの設定を持っておく構造体.
 #[derive(Debug)]
 pub struct AppConfig {
     /// チルダとかを含むことができるユーザー設定パス
@@ -33,6 +38,7 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
+    /// 読み取った構造体からアプリ用設定を作成. 元の構造体は消費される.
     pub fn new(data: AppConfigInput) -> Self {
         let full_storage_dir = data
             .storage_dir

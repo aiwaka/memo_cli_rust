@@ -1,29 +1,19 @@
+//! ファイルの読み書きや形式の変換を行う.
+//! 関連するボイラープレートも定義する.
+
 use chrono::{DateTime, Local};
+use dialoguer::Confirm;
 use std::fs::File;
-use std::io::{prelude::*, stdin, stdout, BufReader};
+use std::io::{prelude::*, BufReader};
 use std::path::Path;
-use std::{error::Error, path::PathBuf};
+use std::path::PathBuf;
 use yaml_rust::{yaml::Hash, Yaml};
 
-use crate::error::FileNotFoundError;
+use crate::error::{FileNotFoundError, OperationCancelError};
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
-pub(crate) fn input_simple_text(prompt: &str) -> String {
-    let mut buf = String::new();
-    print!("{}", prompt);
-    stdout().flush().unwrap();
-    stdin().read_line(&mut buf).expect("could not read string.");
-    if let Some('\n') = buf.chars().next_back() {
-        buf.pop();
-    }
-    if let Some('\r') = buf.chars().next_back() {
-        buf.pop();
-    }
-    buf
-}
-
-/// ファイル作成時のデータをyaml形式文字列で出力
+/// ファイル作成時に, タイトルや日時のデータをyaml形式文字列で返す
 fn create_frontmatter_yaml(title: &str) -> String {
     // 現在日時を取得
     let local_datetime: DateTime<Local> = Local::now();
@@ -40,7 +30,7 @@ fn create_frontmatter_yaml(title: &str) -> String {
     format!("{}\n---\n", to_frontmatter_text(&data).unwrap())
 }
 
-/// ファイル名から実際のパスを構成する
+/// ファイル名から実際のパスを構成する（存在チェックはしない）
 fn name_to_path(title: &str) -> PathBuf {
     let filename = format!("{}.txt", title);
     let storage_dir = Path::new(&APP_CONFIG.get().unwrap().full_storage_dir);
@@ -48,7 +38,7 @@ fn name_to_path(title: &str) -> PathBuf {
     storage_dir.join(Path::new(&filename))
 }
 
-/// ファイル名からパスを構成する. 存在しないファイルの場合終了する
+/// ファイル名からパスを構成する. 存在しないファイルの場合エラーを返す
 pub(crate) fn name_to_exist_path(title: &str) -> Result<PathBuf, FileNotFoundError> {
     let path = name_to_path(title);
     if path.exists() {
@@ -64,11 +54,7 @@ pub(crate) fn set_contents_from_filename(
     buf: &mut String,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let path = name_to_exist_path(title)?;
-    let display = path.display();
-    let file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
+    let file = File::open(&path)?;
     let mut reader = BufReader::new(file);
     reader.read_to_string(buf)?;
     Ok(())
@@ -78,7 +64,7 @@ pub(crate) fn set_contents_from_filename(
 pub(crate) fn extract_first_line(title: &str) -> Result<String, Box<dyn std::error::Error>> {
     let mut buf = String::new();
     set_contents_from_filename(title, &mut buf)?;
-    let (_, text) = parse_frontmatter(&buf).unwrap();
+    let (_, text) = parse_frontmatter(&buf)?;
     let first_text = text
         .chars()
         .enumerate()
@@ -88,7 +74,20 @@ pub(crate) fn extract_first_line(title: &str) -> Result<String, Box<dyn std::err
     Ok(first_text.replace('\n', " "))
 }
 
-pub(crate) fn create_new_file(title: &str) -> Result<(), Box<dyn Error>> {
+/// 新しいメモファイルを作成する. 既存の場合上書きするか聞く.
+pub(crate) fn create_new_memo(title: &str) -> Result<(), OperationCancelError> {
+    if name_to_exist_path(title).is_ok() {
+        println!("the file {} already exists. overwrite it?", title);
+        if !Confirm::new()
+            .show_default(true)
+            .default(false)
+            .wait_for_newline(true)
+            .interact()
+            .unwrap()
+        {
+            return Err(OperationCancelError);
+        }
+    }
     let path = name_to_path(title);
     let display = path.display();
 

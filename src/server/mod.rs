@@ -1,9 +1,9 @@
+//! serveコマンドで起動するローカルサーバーに関するモジュール.
+
 use percent_encoding::percent_decode_str;
 use regex::Regex;
-use std::fs::File;
-use std::io::{prelude::*, BufReader};
+use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::path::Path;
 
 use crate::memo_list::memo_name_list;
 use crate::APP_CONFIG;
@@ -15,20 +15,21 @@ use self::template::{index_html, memo_html, notfound_html, style_css};
 mod memo_block;
 mod template;
 
-pub(crate) fn http_server() {
+pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
     let port = APP_CONFIG.get().unwrap().server_port;
     // TODO: handle error of result
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
+    let listener = TcpListener::bind(format!("127.0.0.1:{}", port))?;
     println!(
         "server can be used on port {}. input command-C (or Ctrl-C) to quit.",
         port
     );
 
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
+        let stream = stream?;
 
         handle_connection(stream);
     }
+    Ok(())
 }
 
 // /// templateディレクトリからhtml文字列を取得する
@@ -43,6 +44,7 @@ pub(crate) fn http_server() {
 //     reader.read_to_string(html_buf).unwrap();
 // }
 
+/// html文字列内の\/\*% style %\*\/という文字列をcssコードに置換する.
 fn inject_stylesheet(html: &mut String) {
     // let path = Path::new("src/server/template/style.css");
     // let file = match File::open(&path) {
@@ -56,7 +58,7 @@ fn inject_stylesheet(html: &mut String) {
     *html = html.replace("/*% style %*/", &css_buf);
 }
 
-/// htmlテンプレートの\<!-- preview -->をメモ一覧に置換
+/// html文字列内の\<!-- preview -->という文字列をメモ一覧のhtmlコードに置換する.
 fn inject_preview_blocks_for_html(html: &mut String) {
     let memo_list = memo_name_list();
     let div_block_list = memo_list
@@ -70,15 +72,19 @@ fn inject_preview_blocks_for_html(html: &mut String) {
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
 
+    // ストリームからリクエストをバッファに読み出す.
     // NOTE: clippy(unused_io_amount)を回避するために適当な束縛をしている.
-    // readの結果読み書きしたバイト数が帰ってくるのをチェックしていないことを怒られている.
+    // readの結果読み書きしたバイト数が帰ってくるのをチェックしていないことを怒られる.
     // 本当はバッファから溢れていないか正しく読むべきだが簡易ローカルサーバーなのでひとまず無視.
+    // read_exactを使うとリクエストに含まれないEOFの処理でエラーが起こる.
     // 下の方のwriteも同様.
     let _ = stream.read(&mut buffer).unwrap();
 
-    let get_index = b"GET / HTTP/1.1\r\n";
+    // まずindexとマッチを試行
+    const GET_INDEX: &[u8; 16] = b"GET / HTTP/1.1\r\n";
     let mut html_buf = String::new();
-    let response = if buffer.starts_with(get_index) {
+    let response = if buffer.starts_with(GET_INDEX) {
+        // マッチしたらindex.htmlを返す
         // get_html_from_template("index", &mut html_buf);
         index_html(&mut html_buf);
         inject_preview_blocks_for_html(&mut html_buf);
@@ -89,6 +95,7 @@ fn handle_connection(mut stream: TcpStream) {
         // indexでないなら正規表現でメモ名を取得
         let get_each_memo_pattern =
             Regex::new(format!("{}\r\n", r"^GET /([^/]*) HTTP/1.1").as_str()).unwrap();
+        // バッファの中身をstrに変換しておく
         let buf_str = std::str::from_utf8(&buffer).unwrap();
         // キャプチャを実行して存在するかどうかまず判断
         let cap = get_each_memo_pattern.captures(buf_str);
@@ -96,7 +103,7 @@ fn handle_connection(mut stream: TcpStream) {
             // イテレータの最初の要素を取得する
             let cap_iter = get_each_memo_pattern.captures_iter(buf_str);
             // urlデコードやマッチ文字列の取得のために結構汚くなっているので綺麗にできたら嬉しい
-            let title = percent_decode_str(
+            let title: String = percent_decode_str(
                 cap_iter
                     .into_iter()
                     .next()
