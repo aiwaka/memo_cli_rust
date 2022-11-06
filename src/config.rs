@@ -1,3 +1,6 @@
+//! ソフトウェアの設定を保存しておくための構造体を定義する.
+//! ここで定義された構造体はグローバル変数として保持する.
+
 use std::path::PathBuf;
 
 use home_dir::HomeDirExt;

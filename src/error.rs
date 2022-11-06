@@ -1,3 +1,5 @@
+//! このソフトウェア独自のエラーを定義する.
+
 use std::error;
 use std::fmt;
 

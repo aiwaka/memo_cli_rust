@@ -1,3 +1,5 @@
+//! serveコマンドで起動するローカルサーバーに関するモジュール.
+
 use percent_encoding::percent_decode_str;
 use regex::Regex;
 use std::io::prelude::*;
@@ -42,7 +44,7 @@ pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
 //     reader.read_to_string(html_buf).unwrap();
 // }
 
-/// html内の\/*% style %*/という文字列をcssの記述に置き換える.
+/// html文字列内の\/\*% style %\*\/という文字列をcssコードに置換する.
 fn inject_stylesheet(html: &mut String) {
     // let path = Path::new("src/server/template/style.css");
     // let file = match File::open(&path) {
@@ -56,7 +58,7 @@ fn inject_stylesheet(html: &mut String) {
     *html = html.replace("/*% style %*/", &css_buf);
 }
 
-/// htmlテンプレートの\<!-- preview -->をメモ一覧に置換
+/// html文字列内の\<!-- preview -->という文字列をメモ一覧のhtmlコードに置換する.
 fn inject_preview_blocks_for_html(html: &mut String) {
     let memo_list = memo_name_list();
     let div_block_list = memo_list

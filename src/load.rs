@@ -1,3 +1,5 @@
+//! 起動時のロードを行う.
+
 use dotenv::dotenv;
 use std::env;
 use std::error::Error;
@@ -8,6 +10,7 @@ use crate::init::init_config;
 use crate::{APP_CONFIG, APP_ENV};
 
 /// 起動時のロードを行う.
+/// 環境変数の読み込みもここで行われる.
 pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
 
