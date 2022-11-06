@@ -4,8 +4,9 @@ pub(super) fn info_command(version: &bool, storage: &bool, port: &bool) {
     let mut version = *version;
     let mut storage = *storage;
     let mut port = *port;
+    // 1つも指定されなかったときに全部のフラグを反転してすべて表示する
     let mut flags = [&mut version, &mut storage, &mut port];
-    if !flags.iter().any(|flag| **flag) {
+    if flags.iter().all(|flag| !**flag) {
         for flag in flags.iter_mut() {
             **flag = true;
         }
