@@ -10,7 +10,10 @@ use crate::APP_CONFIG;
 
 use self::memo_block::{create_memo_block_html, create_memo_preview_block_html};
 
+use self::template::{index_html, memo_html, notfound_html, style_css};
+
 mod memo_block;
+mod template;
 
 pub(crate) fn http_server() {
     let port = APP_CONFIG.get().unwrap().server_port;
@@ -28,27 +31,28 @@ pub(crate) fn http_server() {
     }
 }
 
-/// templateディレクトリからhtml文字列を取得する
-fn get_html_from_template(name: &str, html_buf: &mut String) {
-    let path_str = format!("src/server/template/{}.html", name);
-    let path = Path::new(&path_str);
-    let file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", path.display(), why),
-        Ok(file) => file,
-    };
-    let mut reader = BufReader::new(file);
-    reader.read_to_string(html_buf).unwrap();
-}
+// /// templateディレクトリからhtml文字列を取得する
+// fn get_html_from_template(name: &str, html_buf: &mut String) {
+//     let path_str = format!("src/server/template/{}.html", name);
+//     let path = Path::new(&path_str);
+//     let file = match File::open(&path) {
+//         Err(why) => panic!("couldn't open {}: {}", path.display(), why),
+//         Ok(file) => file,
+//     };
+//     let mut reader = BufReader::new(file);
+//     reader.read_to_string(html_buf).unwrap();
+// }
 
 fn inject_stylesheet(html: &mut String) {
-    let path = Path::new("src/server/template/style.css");
-    let file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", path.display(), why),
-        Ok(file) => file,
-    };
-    let mut reader = BufReader::new(file);
+    // let path = Path::new("src/server/template/style.css");
+    // let file = match File::open(&path) {
+    //     Err(why) => panic!("couldn't open {}: {}", path.display(), why),
+    //     Ok(file) => file,
+    // };
+    // let mut reader = BufReader::new(file);
     let mut css_buf = String::new();
-    reader.read_to_string(&mut css_buf).unwrap();
+    // reader.read_to_string(&mut css_buf).unwrap();
+    style_css(&mut css_buf);
     *html = html.replace("/*% style %*/", &css_buf);
 }
 
@@ -75,7 +79,8 @@ fn handle_connection(mut stream: TcpStream) {
     let get_index = b"GET / HTTP/1.1\r\n";
     let mut html_buf = String::new();
     let response = if buffer.starts_with(get_index) {
-        get_html_from_template("index", &mut html_buf);
+        // get_html_from_template("index", &mut html_buf);
+        index_html(&mut html_buf);
         inject_preview_blocks_for_html(&mut html_buf);
         inject_stylesheet(&mut html_buf);
         let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", html_buf);
@@ -104,17 +109,20 @@ fn handle_connection(mut stream: TcpStream) {
             .into_owned();
             if let Some(view_html) = create_memo_block_html(&title) {
                 // 取得できたらhtmlを整形して返す
-                get_html_from_template("memo", &mut html_buf);
+                // get_html_from_template("memo", &mut html_buf);
+                memo_html(&mut html_buf);
                 inject_stylesheet(&mut html_buf);
                 let final_html = html_buf.replace("<!-- view -->", &view_html);
                 let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", final_html);
                 response
             } else {
-                get_html_from_template("404", &mut html_buf);
+                // get_html_from_template("404", &mut html_buf);
+                notfound_html(&mut html_buf);
                 format!("HTTP/1.1 404 Not Found\r\n\r\n{}", html_buf)
             }
         } else {
-            get_html_from_template("404", &mut html_buf);
+            // get_html_from_template("404", &mut html_buf);
+            notfound_html(&mut html_buf);
             format!("HTTP/1.1 404 Not Found\r\n\r\n{}", html_buf)
         }
     };
