@@ -26,6 +26,7 @@ pub enum Subcommands {
     Edit { name: Option<String> },
     /// browse memo
     View { name: Option<String> },
+    // TODO: init feature（完全初期化の他, 既存のファイルの移動とかを行えるようにしたい）
     // TODO: grep feature
     /// remove memo from storage
     Remove { name: Option<String> },
