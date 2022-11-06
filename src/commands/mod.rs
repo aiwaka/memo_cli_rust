@@ -33,7 +33,7 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             edit_command(name)?;
         }
         Subcommands::View { name } => {
-            view_command(name);
+            view_command(name)?;
         }
         Subcommands::Remove { name } => {
             remove_command(name)?;
@@ -42,7 +42,7 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             copy_command(name, md, rename)?;
         }
         Subcommands::Serve => {
-            http_server();
+            http_server()?;
         }
         Subcommands::Info {
             version,

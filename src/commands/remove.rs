@@ -13,7 +13,7 @@ pub(super) fn remove_command(name: &Option<String>) -> Result<(), Box<dyn std::e
         .interact()
         .unwrap()
     {
-        remove_file(path).unwrap();
+        remove_file(path)?;
         println!("remove '{}' from storage", name);
         Ok(())
     } else {

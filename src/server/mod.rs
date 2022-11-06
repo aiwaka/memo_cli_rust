@@ -1,9 +1,7 @@
 use percent_encoding::percent_decode_str;
 use regex::Regex;
-use std::fs::File;
-use std::io::{prelude::*, BufReader};
+use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::path::Path;
 
 use crate::memo_list::memo_name_list;
 use crate::APP_CONFIG;
@@ -15,20 +13,21 @@ use self::template::{index_html, memo_html, notfound_html, style_css};
 mod memo_block;
 mod template;
 
-pub(crate) fn http_server() {
+pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
     let port = APP_CONFIG.get().unwrap().server_port;
     // TODO: handle error of result
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
+    let listener = TcpListener::bind(format!("127.0.0.1:{}", port))?;
     println!(
         "server can be used on port {}. input command-C (or Ctrl-C) to quit.",
         port
     );
 
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
+        let stream = stream?;
 
         handle_connection(stream);
     }
+    Ok(())
 }
 
 // /// templateディレクトリからhtml文字列を取得する
