@@ -31,7 +31,6 @@ pub(crate) fn memo_fullpath_list() -> Vec<(String, PathBuf)> {
 /// メモの名前の一覧を取得する
 pub(crate) fn memo_name_list() -> Vec<String> {
     let storage_dir = APP_CONFIG.get().unwrap().full_storage_dir.clone();
-    println!("{}", storage_dir);
     let files = read_dir(storage_dir).unwrap();
     files
         .into_iter()
