@@ -12,17 +12,17 @@ httpサーバーを起動してマークダウンのプレビューを行うこ�
 ## コマンド
 
 ```shell
-Usage: memocr <COMMAND>
+sage: memocr <COMMAND>
 
 Commands:
-  new     create new file
-  list    display memo list in storage
-  edit    edit a memo
-  view    browse a memo
-  remove  remove a memo from storage
-  copy    copy the specified memo file to current directory
-  serve   build a simple http server. default port is 8190 (it can be configured)
-  info    show the information of this app
+  new     Create a new file
+  list    List memo in storage
+  edit    Edit a memo
+  view    Browse a memo
+  remove  Remove a memo from storage
+  copy    Copy the specified memo file to current directory
+  serve   Set up a simple local http server. Default port is 8190 (configurable)
+  info    Display information about this app
   help    Print this message or the help of the given subcommand(s)
 
 Options:
