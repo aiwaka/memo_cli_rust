@@ -11,7 +11,9 @@ pub(super) fn info_command(version: &bool, storage: &bool, port: &bool) {
         }
     }
     if version {
-        println!("memos_cli 0.1.0");
+        let name = env!("CARGO_PKG_NAME");
+        let version = env!("CARGO_PKG_VERSION");
+        println!("{} {}", name, version);
     }
     if storage {
         let storage_dir = APP_CONFIG.get().unwrap().storage_dir.clone();
