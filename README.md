@@ -1,16 +1,18 @@
-# memo cli rust
+# memocr
 
-コマンドラインで簡単なメモを管理できるツールです.
-マークダウン形式を想定しています.
+コマンドラインで簡易的にメモを管理できるツールです.
+
+メモを作成するとyaml形式のfrontmatterブロックが自動で生成され, これを含んだマークダウンとして書くことを想定しています.
+httpサーバーを起動してマークダウンのプレビューを行うこともできます.
 
 ## インストール
 
-`cargo install memos_cli`
+`cargo install memocr`
 
-## 機能
+## コマンド
 
 ```shell
-Usage: memos_cli <COMMAND>
+Usage: memocr <COMMAND>
 
 Commands:
   new     create new file
