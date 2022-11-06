@@ -86,7 +86,6 @@ pub(crate) fn create_new_memo(title: &str) -> Result<(), OperationCancelError> {
             .interact()
             .unwrap()
         {
-            println!("canceled");
             return Err(OperationCancelError);
         }
     }

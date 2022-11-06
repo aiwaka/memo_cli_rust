@@ -13,6 +13,7 @@ mod server;
 use crate::{commands::execute_commands, config::AppEnv, parser::AppArgs};
 use clap::Parser;
 use config::AppConfig;
+use error::{FileNotFoundError, OperationCancelError};
 use once_cell::sync::OnceCell;
 use std::error::Error;
 
@@ -30,7 +31,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = AppArgs::parse();
     // println!("{:?}", args);
 
-    execute_commands(&args)?;
+    let res = execute_commands(&args);
+    if let Err(err) = res {
+        if err.is::<OperationCancelError>() || err.is::<FileNotFoundError>() {
+            println!("{}", err);
+        } else {
+            return Err(err);
+        }
+    }
 
     Ok(())
 }
