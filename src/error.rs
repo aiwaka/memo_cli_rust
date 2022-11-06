@@ -2,6 +2,21 @@ use std::error;
 use std::fmt;
 
 #[derive(Debug, Clone)]
+pub(crate) struct OperationCancelError;
+
+impl fmt::Display for OperationCancelError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "operation canceled.")
+    }
+}
+
+impl error::Error for OperationCancelError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        None
+    }
+}
+
+#[derive(Debug, Clone)]
 pub(crate) struct FileNotFoundError {
     filename: String,
 }

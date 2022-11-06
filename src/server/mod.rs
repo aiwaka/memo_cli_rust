@@ -42,6 +42,7 @@ pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
 //     reader.read_to_string(html_buf).unwrap();
 // }
 
+/// html内の\/*% style %*/という文字列をcssの記述に置き換える.
 fn inject_stylesheet(html: &mut String) {
     // let path = Path::new("src/server/template/style.css");
     // let file = match File::open(&path) {
@@ -69,15 +70,19 @@ fn inject_preview_blocks_for_html(html: &mut String) {
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
 
+    // ストリームからリクエストをバッファに読み出す.
     // NOTE: clippy(unused_io_amount)を回避するために適当な束縛をしている.
-    // readの結果読み書きしたバイト数が帰ってくるのをチェックしていないことを怒られている.
+    // readの結果読み書きしたバイト数が帰ってくるのをチェックしていないことを怒られる.
     // 本当はバッファから溢れていないか正しく読むべきだが簡易ローカルサーバーなのでひとまず無視.
+    // read_exactを使うとリクエストに含まれないEOFの処理でエラーが起こる.
     // 下の方のwriteも同様.
     let _ = stream.read(&mut buffer).unwrap();
 
-    let get_index = b"GET / HTTP/1.1\r\n";
+    // まずindexとマッチを試行
+    const GET_INDEX: &[u8; 16] = b"GET / HTTP/1.1\r\n";
     let mut html_buf = String::new();
-    let response = if buffer.starts_with(get_index) {
+    let response = if buffer.starts_with(GET_INDEX) {
+        // マッチしたらindex.htmlを返す
         // get_html_from_template("index", &mut html_buf);
         index_html(&mut html_buf);
         inject_preview_blocks_for_html(&mut html_buf);
@@ -88,6 +93,7 @@ fn handle_connection(mut stream: TcpStream) {
         // indexでないなら正規表現でメモ名を取得
         let get_each_memo_pattern =
             Regex::new(format!("{}\r\n", r"^GET /([^/]*) HTTP/1.1").as_str()).unwrap();
+        // バッファの中身をstrに変換しておく
         let buf_str = std::str::from_utf8(&buffer).unwrap();
         // キャプチャを実行して存在するかどうかまず判断
         let cap = get_each_memo_pattern.captures(buf_str);
@@ -95,7 +101,7 @@ fn handle_connection(mut stream: TcpStream) {
             // イテレータの最初の要素を取得する
             let cap_iter = get_each_memo_pattern.captures_iter(buf_str);
             // urlデコードやマッチ文字列の取得のために結構汚くなっているので綺麗にできたら嬉しい
-            let title = percent_decode_str(
+            let title: String = percent_decode_str(
                 cap_iter
                     .into_iter()
                     .next()
