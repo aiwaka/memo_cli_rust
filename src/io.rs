@@ -2,10 +2,10 @@ use chrono::{DateTime, Local};
 use std::fs::File;
 use std::io::{prelude::*, stdin, stdout, BufReader};
 use std::path::Path;
-use std::process::exit;
 use std::{error::Error, path::PathBuf};
 use yaml_rust::{yaml::Hash, Yaml};
 
+use crate::error::FileNotFoundError;
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
@@ -49,15 +49,12 @@ fn name_to_path(title: &str) -> PathBuf {
 }
 
 /// ファイル名からパスを構成する. 存在しないファイルの場合終了する
-pub(crate) fn name_to_exist_path(title: &str) -> PathBuf {
+pub(crate) fn name_to_exist_path(title: &str) -> Result<PathBuf, FileNotFoundError> {
     let path = name_to_path(title);
     if path.exists() {
-        path
+        Ok(path)
     } else {
-        println!("the file '{}' does not exist.", title);
-        // TODO: ここで終了せずに適切にエラーを伝播させるようにする
-        // そうしないとサーバーで読み込んだ際に即座にサーバーが終了して404も出ない.
-        exit(1);
+        Err(FileNotFoundError::new(path.to_str().unwrap().to_string()))
     }
 }
 
@@ -65,8 +62,8 @@ pub(crate) fn name_to_exist_path(title: &str) -> PathBuf {
 pub(crate) fn set_contents_from_filename(
     title: &str,
     buf: &mut String,
-) -> Result<(), std::io::Error> {
-    let path = name_to_exist_path(title);
+) -> Result<(), Box<dyn std::error::Error>> {
+    let path = name_to_exist_path(title)?;
     let display = path.display();
     let file = match File::open(&path) {
         Err(why) => panic!("couldn't open {}: {}", display, why),
@@ -78,7 +75,7 @@ pub(crate) fn set_contents_from_filename(
 }
 
 /// ファイル名を指定してコンテンツの1行目を取得する. 改行は空白に置き換える
-pub(crate) fn extract_first_line(title: &str) -> Result<String, std::io::Error> {
+pub(crate) fn extract_first_line(title: &str) -> Result<String, Box<dyn std::error::Error>> {
     let mut buf = String::new();
     set_contents_from_filename(title, &mut buf)?;
     let (_, text) = parse_frontmatter(&buf).unwrap();

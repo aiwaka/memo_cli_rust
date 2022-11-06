@@ -1,3 +1,5 @@
+//! サブコマンドごとに実行関数を切り分けたモジュール.
+
 use crate::{
     parser::{AppArgs, Subcommands},
     server::http_server,
@@ -16,27 +18,28 @@ mod new;
 mod remove;
 mod view;
 
+/// パースした構造体を受け取って各関数の処理を投げる関数.
 pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error::Error>> {
     match &args.subcommands {
         Subcommands::New { name } => {
             let memo_name = new_command(name)?;
             // 作成後すぐ編集する
-            edit_command(&Some(memo_name));
+            edit_command(&Some(memo_name))?;
         }
         Subcommands::List { full } => {
             list_memos(full);
         }
         Subcommands::Edit { name } => {
-            edit_command(name);
+            edit_command(name)?;
         }
         Subcommands::View { name } => {
             view_command(name);
         }
         Subcommands::Remove { name } => {
-            remove_command(name);
+            remove_command(name)?;
         }
         Subcommands::Copy { name, md, rename } => {
-            copy_command(name, md, rename);
+            copy_command(name, md, rename)?;
         }
         Subcommands::Serve => {
             http_server();
