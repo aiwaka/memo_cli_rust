@@ -8,7 +8,7 @@ use crate::APP_CONFIG;
 
 /// メモのフルパス一覧を取得する
 pub(crate) fn memo_fullpath_list() -> Vec<(String, PathBuf)> {
-    let storage_dir = APP_CONFIG.get().unwrap().storage_dir.clone();
+    let storage_dir = APP_CONFIG.get().unwrap().full_storage_dir.clone();
     let files = read_dir(storage_dir).unwrap();
     files
         .into_iter()
@@ -28,9 +28,9 @@ pub(crate) fn memo_fullpath_list() -> Vec<(String, PathBuf)> {
         .collect::<Vec<_>>()
 }
 
-/// メモの名前の一覧を取得する
+/// ストレージ内のメモの名前の一覧を取得する
 pub(crate) fn memo_name_list() -> Vec<String> {
-    let storage_dir = APP_CONFIG.get().unwrap().storage_dir.clone();
+    let storage_dir = APP_CONFIG.get().unwrap().full_storage_dir.clone();
     let files = read_dir(storage_dir).unwrap();
     files
         .into_iter()
@@ -48,6 +48,7 @@ pub(crate) fn memo_name_list() -> Vec<String> {
         .collect::<Vec<_>>()
 }
 
+/// メモ一覧からコンソールで曖昧検索する
 pub(crate) fn fuzzy_select_memo() -> String {
     let name_list = memo_name_list();
     let selection = FuzzySelect::with_theme(&ColorfulTheme::default())
@@ -59,6 +60,7 @@ pub(crate) fn fuzzy_select_memo() -> String {
     name_list[selection].clone()
 }
 
+/// 名前を指定された場合にはそれを返し, されなかった場合には曖昧検索で決定する処理をまとめたもの
 pub(crate) fn fuzzy_select_memo_or_default(default: &Option<String>) -> String {
     if let Some(name) = default {
         name.clone()

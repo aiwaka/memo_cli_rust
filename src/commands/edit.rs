@@ -1,10 +1,9 @@
-use crate::{editor::edit_with_vim, memo_list::fuzzy_select_memo};
+use crate::{
+    editor::edit_with_vim, error::FileNotFoundError, memo_list::fuzzy_select_memo_or_default,
+};
 
-pub(super) fn edit_command(name: &Option<String>) {
-    let name = if let Some(name) = name {
-        name.clone()
-    } else {
-        fuzzy_select_memo()
-    };
-    edit_with_vim(name);
+pub(super) fn edit_command(name: &Option<String>) -> Result<(), FileNotFoundError> {
+    let name = fuzzy_select_memo_or_default(name);
+    // TODO: vim以外も使えるようにできたら嬉しい
+    edit_with_vim(name)
 }

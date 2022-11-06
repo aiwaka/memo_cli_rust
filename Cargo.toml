@@ -1,6 +1,10 @@
 [package]
-name = "memos_cli"
+name = "memocr"
 version = "0.1.0"
+authors = ["aiwaka"]
+license-file = "LICENSE"
+description = "A simple note management tool.\nIt has the ability to create, edit (using Vim), delete, list, and view contents.\nYou can also set up a local server and preview markdowns in a browser."
+repository = "https://github.com/littleIkawa/memo_cli_rust"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,11 +14,14 @@ once_cell = "1.16"
 chrono = "0.4"
 unicode-width = "0.1"
 toml = "0.5"
+regex = "1.6"
+percent-encoding = "2.2"
+pulldown-cmark = "0.9"
 yaml-rust = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 clap = { version = "4.0", features = ["derive"] }
 dialoguer = { version = "0.10", features = ["fuzzy-select"] }
-home = "*"
+home-dir = "*"
 dotenv = "0.15"
 
 [dev-dependencies]
