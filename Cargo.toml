@@ -1,8 +1,8 @@
 [package]
-name = "memos_cli"
+name = "memocr"
 version = "0.1.0"
 authors = ["aiwaka"]
-# license-file = ""
+license-file = "LICENSE"
 description = "A simple note management tool.\nIt has the ability to create, edit (using Vim), delete, list, and view contents.\nYou can also set up a local server and preview markdowns in a browser."
 repository = "https://github.com/littleIkawa/memo_cli_rust"
 edition = "2021"
