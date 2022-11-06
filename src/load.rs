@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fs::read_to_string;
 
 use crate::config::{AppConfig, AppConfigInput, AppEnv};
+use crate::init::init_config;
 use crate::{APP_CONFIG, APP_ENV};
 
 pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
@@ -14,7 +15,15 @@ pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
 
     APP_ENV.set(AppEnv { config_path }).unwrap();
 
-    let app_config_str = read_to_string(APP_ENV.get().unwrap().get_config_fullpath())?;
+    // 設定ファイルの完全な形のパスを得ることができない場合は初期化を行う
+    let config_fullpath =
+        if let Some(config_fullpath) = APP_ENV.get().unwrap().get_config_fullpath_canonicalized() {
+            config_fullpath
+        } else {
+            init_config(true)?
+        };
+    let app_config_str = read_to_string(config_fullpath)?;
+    // 設定はtomlとしてパースする
     let app_config_input: AppConfigInput = toml::from_str(&app_config_str)?;
 
     APP_CONFIG.set(AppConfig::new(app_config_input)).unwrap();

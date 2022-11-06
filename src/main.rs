@@ -2,6 +2,7 @@ mod commands;
 mod config;
 mod editor;
 mod frontmatter_parser;
+mod init;
 mod io;
 mod load;
 mod memo_list;

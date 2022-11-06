@@ -9,11 +9,10 @@ pub struct AppEnv {
 }
 impl AppEnv {
     pub fn get_config_fullpath(&self) -> PathBuf {
-        self.config_path
-            .expand_home()
-            .unwrap()
-            .canonicalize()
-            .unwrap()
+        self.config_path.expand_home().unwrap()
+    }
+    pub fn get_config_fullpath_canonicalized(&self) -> Option<PathBuf> {
+        self.config_path.expand_home().unwrap().canonicalize().ok()
     }
 }
 
