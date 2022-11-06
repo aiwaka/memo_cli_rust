@@ -1,3 +1,5 @@
+//! clap用の引数パーサを定義する.
+
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]

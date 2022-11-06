@@ -1,3 +1,6 @@
+//! ファイルの読み書きや形式の変換を行う.
+//! 関連するボイラープレートも定義する.
+
 use chrono::{DateTime, Local};
 use dialoguer::Confirm;
 use std::fs::File;
@@ -10,7 +13,7 @@ use crate::error::{FileNotFoundError, OperationCancelError};
 use crate::frontmatter_parser::parse_frontmatter;
 use crate::{frontmatter_parser::to_frontmatter_text, APP_CONFIG};
 
-/// ファイル作成時のデータをyaml形式文字列で出力
+/// ファイル作成時に, タイトルや日時のデータをyaml形式文字列で返す
 fn create_frontmatter_yaml(title: &str) -> String {
     // 現在日時を取得
     let local_datetime: DateTime<Local> = Local::now();
@@ -27,7 +30,7 @@ fn create_frontmatter_yaml(title: &str) -> String {
     format!("{}\n---\n", to_frontmatter_text(&data).unwrap())
 }
 
-/// ファイル名から実際のパスを構成する
+/// ファイル名から実際のパスを構成する（存在チェックはしない）
 fn name_to_path(title: &str) -> PathBuf {
     let filename = format!("{}.txt", title);
     let storage_dir = Path::new(&APP_CONFIG.get().unwrap().full_storage_dir);
@@ -51,11 +54,7 @@ pub(crate) fn set_contents_from_filename(
     buf: &mut String,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let path = name_to_exist_path(title)?;
-    let display = path.display();
-    let file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
+    let file = File::open(&path)?;
     let mut reader = BufReader::new(file);
     reader.read_to_string(buf)?;
     Ok(())
@@ -65,7 +64,7 @@ pub(crate) fn set_contents_from_filename(
 pub(crate) fn extract_first_line(title: &str) -> Result<String, Box<dyn std::error::Error>> {
     let mut buf = String::new();
     set_contents_from_filename(title, &mut buf)?;
-    let (_, text) = parse_frontmatter(&buf).unwrap();
+    let (_, text) = parse_frontmatter(&buf)?;
     let first_text = text
         .chars()
         .enumerate()

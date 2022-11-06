@@ -7,6 +7,7 @@ use crate::config::{AppConfig, AppConfigInput, AppEnv};
 use crate::init::init_config;
 use crate::{APP_CONFIG, APP_ENV};
 
+/// 起動時のロードを行う.
 pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
 
