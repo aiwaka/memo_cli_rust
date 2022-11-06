@@ -24,10 +24,10 @@ static APP_CONFIG: OnceCell<AppConfig> = OnceCell::new();
 
 fn main() -> Result<(), Box<dyn Error>> {
     load_config()?;
-    println!("{}", APP_CONFIG.get().unwrap().storage_dir);
+    // println!("{}", APP_CONFIG.get().unwrap().storage_dir);
 
     let args = AppArgs::parse();
-    println!("{:?}", args);
+    // println!("{:?}", args);
 
     execute_commands(&args)?;
 
