@@ -43,7 +43,7 @@ fn create_frontmatter_yaml(title: &str) -> String {
 /// ファイル名から実際のパスを構成する
 fn name_to_path(title: &str) -> PathBuf {
     let filename = format!("{}.txt", title);
-    let storage_dir = Path::new(&APP_CONFIG.get().unwrap().storage_dir);
+    let storage_dir = Path::new(&APP_CONFIG.get().unwrap().full_storage_dir);
 
     storage_dir.join(Path::new(&filename))
 }
