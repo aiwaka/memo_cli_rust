@@ -25,6 +25,7 @@ impl AppEnv {
 pub struct AppConfigInput {
     pub storage_dir: String,
     pub server_port: u16,
+    pub editor: String,
 }
 
 /// 読み込んだ設定を使ってアプリの設定を持っておく構造体.
@@ -35,6 +36,8 @@ pub struct AppConfig {
     /// 完全に展開されたパス
     pub full_storage_dir: String,
     pub server_port: u16,
+    /// 使用するエディタ
+    pub editor: String,
 }
 
 impl AppConfig {
@@ -53,6 +56,7 @@ impl AppConfig {
             storage_dir: data.storage_dir,
             full_storage_dir,
             server_port: data.server_port,
+            editor: data.editor,
         }
     }
 }
