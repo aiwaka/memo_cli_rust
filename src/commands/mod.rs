@@ -28,7 +28,7 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
             edit_command(&Some(memo_name))?;
         }
         Subcommands::List { full } => {
-            list_command(full);
+            list_command(full)?;
         }
         Subcommands::Edit { name } => {
             edit_command(name)?;
