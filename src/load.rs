@@ -19,16 +19,25 @@ pub(crate) fn load_config() -> Result<(), Box<dyn Error>> {
 
     APP_ENV.set(AppEnv { config_path }).unwrap();
 
-    // 設定ファイルの完全な形のパスを得ることができない場合は初期化を行う
-    let config_fullpath =
-        if let Some(config_fullpath) = APP_ENV.get().unwrap().get_config_fullpath_canonicalized() {
+    // コンフィグを得られるまでループする
+    let app_config_input = loop {
+        // 設定ファイルの完全な形のパスを得ることができない場合は初期化を行う
+        let config_fullpath = if let Some(config_fullpath) =
+            APP_ENV.get().unwrap().get_config_fullpath_canonicalized()
+        {
             config_fullpath
         } else {
             init_config(true)?
         };
-    let app_config_str = read_to_string(config_fullpath)?;
-    // 設定はtomlとしてパースする
-    let app_config_input: AppConfigInput = toml::from_str(&app_config_str)?;
+        let app_config_str = read_to_string(config_fullpath)?;
+        // 設定はtomlとしてパースする. パースできない場合は初期化を行いループの最初で再度取得する
+        match toml::from_str::<AppConfigInput>(&app_config_str) {
+            Ok(config) => {
+                break config;
+            }
+            Err(_) => init_config(true)?,
+        };
+    };
 
     APP_CONFIG.set(AppConfig::new(app_config_input)).unwrap();
 
