@@ -6,6 +6,7 @@ use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
 use crate::memo_list::memo_name_list;
+use crate::server::open_browser::open_browser;
 use crate::APP_CONFIG;
 
 use self::memo_block::{create_memo_block_html, create_memo_preview_block_html};
@@ -13,6 +14,7 @@ use self::memo_block::{create_memo_block_html, create_memo_preview_block_html};
 use self::template::{index_html, memo_html, notfound_html, style_css};
 
 mod memo_block;
+mod open_browser;
 mod template;
 
 pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,6 +25,7 @@ pub(crate) fn http_server() -> Result<(), Box<dyn std::error::Error>> {
         "server can be used on port {}. input command-C (or Ctrl-C) to quit.",
         port
     );
+    open_browser(format!("http://localhost:{}/", port))?;
 
     for stream in listener.incoming() {
         let stream = stream?;
