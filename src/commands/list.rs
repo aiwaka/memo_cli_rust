@@ -18,8 +18,7 @@ fn get_substring_of_limited_width(text: &str, target: usize) -> &str {
     ""
 }
 
-// TODO: rename
-pub(super) fn list_memos(full: &bool) {
+pub(super) fn list_command(full: &bool) {
     if *full {
         let memo_list = memo_fullpath_list();
         for (title, fullpath) in memo_list.iter() {
