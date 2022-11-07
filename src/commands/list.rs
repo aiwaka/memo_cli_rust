@@ -6,6 +6,7 @@ use crate::{
 };
 
 /// 指定された幅を超えない最大の大きさの部分文字列を返す
+#[allow(dead_code)]
 fn get_substring_of_limited_width(text: &str, target: usize) -> &str {
     for i in 1..text.len() {
         let slice_end = text.char_indices().nth(i).unwrap().0;
