@@ -1,6 +1,6 @@
 [package]
 name = "memocr"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["aiwaka"]
 license-file = "LICENSE"
 description = "A simple note management tool.\nIt has the ability to create, edit (using Vim), delete, list, and view contents.\nYou can also set up a local server and preview markdowns in a browser."

@@ -11,8 +11,9 @@ use crate::APP_ENV;
 /// 見つからなかった場合と強制的な上書きの場合でメッセージを変化させたいので引数を取る.
 pub(crate) fn init_config(not_found: bool) -> Result<PathBuf, std::io::Error> {
     const DEFAULT_STORAGE_PATH: &str = "~/rustmemostorage/";
+    const DEFAULT_EDITOR: &str = "vim";
     let prompt = if not_found {
-        "config file '.rustmemorc' not found. create it ?\n(it will be created at home directory by default. you can set another directory writing `export MEMOS_CLI_CONFIG_PATH=...` to your shell configure file.)"
+        "The configuration file '.rustmemorc' is not found or broken. Do you want to create it?\n(It will be created at home directory by default. You can set another directory writing `export MEMOS_CLI_CONFIG_PATH=...` to your shell configure file.)"
     } else {
         "initialize config file again?"
     };
@@ -48,11 +49,21 @@ pub(crate) fn init_config(not_found: bool) -> Result<PathBuf, std::io::Error> {
             .interact_text()
             .unwrap();
 
+        // エディタを指定
+        let input_editor: String = Input::with_theme(&SimpleTheme)
+            .with_prompt(format!(
+                "input your editor on terminal ('{}' used by default).",
+                DEFAULT_EDITOR
+            ))
+            .with_initial_text::<String>(DEFAULT_EDITOR.into())
+            .interact_text()
+            .unwrap();
+
         // 確認してから実際に作成
         if Confirm::with_theme(&SimpleTheme)
             .with_prompt(format!(
-                "create a configure file using following info.\nstorage dir: {}\nport: {}\n",
-                input_storage_path_str, input_port
+                "create a configure file using following info.\nstorage dir: {}\nport: {}\neditor: {}",
+                input_storage_path_str, input_port, input_editor,
             ))
             .show_default(true)
             .default(true)
@@ -69,8 +80,8 @@ pub(crate) fn init_config(not_found: bool) -> Result<PathBuf, std::io::Error> {
             // 設定ファイルは今のところ大した項目はないがyaml形式とする.
             config_file.write_all(
                 format!(
-                    "storage_dir=\"{}\"\nserver_port={}",
-                    input_storage_path_str, input_port,
+                    "storage_dir=\"{}\"\nserver_port={}\neditor=\"{}\"",
+                    input_storage_path_str, input_port, input_editor,
                 )
                 .as_bytes(),
             )?;

@@ -10,7 +10,7 @@ pub(super) fn copy_command(
     md: &bool,
     rename: &Option<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let name = fuzzy_select_memo_or_default(name);
+    let name = fuzzy_select_memo_or_default(name)?;
     let current_dir = env::current_dir().unwrap();
     let from_path = name_to_exist_path(&name)?;
     let target_path = current_dir.join(Path::new(&format!(
