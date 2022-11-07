@@ -6,12 +6,13 @@ use crate::{
 };
 
 use self::{
-    copy::copy_command, edit::edit_command, info::info_command, list::list_memos, new::new_command,
-    remove::remove_command, view::view_command,
+    copy::copy_command, edit::edit_command, grep::grep_command, info::info_command,
+    list::list_memos, new::new_command, remove::remove_command, view::view_command,
 };
 
 mod copy;
 mod edit;
+mod grep;
 mod info;
 mod list;
 mod new;
@@ -37,6 +38,9 @@ pub(crate) fn execute_commands(args: &AppArgs) -> Result<(), Box<dyn std::error:
         }
         Subcommands::Remove { name } => {
             remove_command(name)?;
+        }
+        Subcommands::Grep { args } => {
+            grep_command(args)?;
         }
         Subcommands::Copy { name, md, rename } => {
             copy_command(name, md, rename)?;
