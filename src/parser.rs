@@ -29,9 +29,13 @@ pub enum Subcommands {
     /// Browse a memo
     View { name: Option<String> },
     // TODO: init feature（完全初期化の他, 既存のファイルの移動とかを行えるようにしたい）
-    // TODO: grep feature
     /// Remove a memo from storage
     Remove { name: Option<String> },
+    /// Searching the contents of a file with the `grep` command
+    #[command(
+        long_about = "Searching the contents of a file with the `grep` command\nIf you want to specify an option as an argument to the grep command, put a '--' between grep and the option"
+    )]
+    Grep { args: Vec<String> },
     /// Copy the specified memo file to current directory
     Copy {
         name: Option<String>,
