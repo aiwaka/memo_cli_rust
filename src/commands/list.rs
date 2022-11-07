@@ -18,7 +18,7 @@ fn get_substring_of_limited_width(text: &str, target: usize) -> &str {
     ""
 }
 
-pub(super) fn list_command(full: &bool) {
+pub(super) fn list_command(full: &bool) -> Result<(), Box<dyn std::error::Error>> {
     if *full {
         let memo_list = memo_fullpath_list();
         for (title, fullpath) in memo_list.iter() {
@@ -30,10 +30,11 @@ pub(super) fn list_command(full: &bool) {
             );
         }
     } else {
-        let memo_list = memo_name_list();
+        let memo_list = memo_name_list()?;
         for title in memo_list.iter() {
             let first_line = extract_first_line(title).unwrap();
             println!("{:<width$}: {}", title, first_line, width = 16);
         }
     }
+    Ok(())
 }

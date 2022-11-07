@@ -65,6 +65,7 @@ fn inject_stylesheet(html: &mut String) {
 fn inject_preview_blocks_for_html(html: &mut String) {
     let memo_list = memo_name_list();
     let div_block_list = memo_list
+        .unwrap()
         .iter()
         .map(|title| create_memo_preview_block_html(title))
         .collect::<Vec<_>>();
