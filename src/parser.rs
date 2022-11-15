@@ -10,7 +10,7 @@ use clap::{Parser, Subcommand};
     about = env!("CARGO_PKG_DESCRIPTION"),
 )]
 pub struct AppArgs {
-    #[command(subcommand)]
+    #[clap(subcommand)]
     pub subcommands: Subcommands,
 }
 
@@ -32,7 +32,7 @@ pub enum Subcommands {
     /// Remove a memo from storage
     Remove { name: Option<String> },
     /// Searching the contents of a file with the `grep` command
-    #[command(
+    #[clap(
         long_about = "Searching the contents of a file with the `grep` command\nIf you want to specify an option as an argument to the grep command, put a '--' between grep and the option"
     )]
     Grep { args: Vec<String> },
