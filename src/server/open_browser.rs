@@ -9,7 +9,7 @@ pub(crate) fn open_browser(url: String) -> Result<(), Box<dyn Error>> {
     #[cfg(target_os = "windows")]
     let open_command = "start";
     #[cfg(target_os = "linux")]
-    let open_command = "xgd-open";
+    let open_command = "xdg-open";
 
     Command::new(open_command).arg(url).status()?;
     Ok(())
